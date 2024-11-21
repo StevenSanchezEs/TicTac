@@ -1,0 +1,24 @@
+ul{
+    width: 100%;
+    padding: 0 150px;
+    padding-top: 50px;
+    list-style: none; /* Elimina las viñetas */
+    margin: 0 auto;
+    padding-bottom: 77px;
+}
+
+p{
+    font-weight: bolder;
+    font-size: 19px;
+    word-wrap: break-word; /* Ajusta el texto automáticamente */
+    overflow-wrap: break-word; /* Compatibilidad adicional */
+    line-height: 1.5; /* Mejora la legibilidad */
+}
+
+@media (max-width: 768px){
+    ul{
+        padding: 0 20px;
+        padding-top: 30px;
+        padding-bottom: 77px;
+    }
+}

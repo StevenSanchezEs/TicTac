@@ -1,0 +1,15 @@
+.modal{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background: rgba(237, 237, 237, 0.844);
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    z-index: 1000;
+}

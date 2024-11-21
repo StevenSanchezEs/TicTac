@@ -1,0 +1,32 @@
+.todoItem{
+    display: flex;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    width: 100%;
+    min-height: 70px;
+    max-height: auto;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+.todoItemText{
+    font-size: 17px;
+    padding: 0 20px;
+}
+
+.deleteIcon:hover{
+    color: rgb(255, 0, 0);
+}
+
+.todoItemTextComplete{
+    text-decoration: line-through;
+    color: rgb(151, 151, 151);
+}
+
+.checkIconActive{
+    color: rgb(0, 255, 132);
+}

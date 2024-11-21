@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #F2F4F5;
+  color: #1E1E1F;
+  font-family: 'Montserrart', Arial, Helvetica, sans-serif;
+}
