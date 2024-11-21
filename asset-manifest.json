@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/TicTac/static/css/main.a1853cea.css",
+    "main.js": "/TicTac/static/js/main.2e050618.js",
+    "static/media/bootstrap-icons.woff?": "/TicTac/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
+    "static/media/bootstrap-icons.woff2?": "/TicTac/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
+    "index.html": "/TicTac/index.html",
+    "main.a1853cea.css.map": "/TicTac/static/css/main.a1853cea.css.map",
+    "main.2e050618.js.map": "/TicTac/static/js/main.2e050618.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a1853cea.css",
+    "static/js/main.2e050618.js"
+  ]
+}
