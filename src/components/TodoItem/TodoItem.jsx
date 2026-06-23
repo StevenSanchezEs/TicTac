@@ -7,7 +7,15 @@ export function TodoItem(props){
       : 'Sin fecha programada';
 
     return (
-      <li className={styles.todoItem}>
+      <li
+        className={styles.todoItem}
+        draggable
+        onDragStart={(event) => {
+          event.dataTransfer.effectAllowed = 'move';
+          props.onDragStart();
+        }}
+        onDragEnd={props.onDragEnd}
+      >
         <div className={styles.taskTopline}>
           <button
             className={`${styles.completeButton} ${props.completed ? styles.checkIconActive : ''}`}

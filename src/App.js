@@ -45,10 +45,16 @@ function App() {
     deleteLane,
   } = useTodos();
   const [modalMode, setModalMode] = useState('task');
+  const [draggedTaskId, setDraggedTaskId] = useState(null);
 
   const openModal = (mode) => {
     setModalMode(mode);
     setIsOpen(true);
+  };
+
+  const handleDropTask = (laneId) => {
+    if (draggedTaskId) moveTask(draggedTaskId, laneId);
+    setDraggedTaskId(null);
   };
   
   return (
@@ -77,7 +83,13 @@ function App() {
         {lanes.map(lane => {
           const laneTodos = searchedTodos.filter(todo => (todo.laneId || 'todo') === lane.id);
           return (
-            <TodoList key={lane.id} lane={lane} count={laneTodos.length}>
+            <TodoList
+              key={lane.id}
+              lane={lane}
+              count={laneTodos.length}
+              onDropTask={() => handleDropTask(lane.id)}
+              isDragging={Boolean(draggedTaskId)}
+            >
               {loading ? <TaskSkeleton /> : laneTodos.map(todo => (
                 <TodoItem
                   key={todo.id}
@@ -86,6 +98,8 @@ function App() {
                   onCompleted={() => onCompleted(todo.id)}
                   onDelete={() => onDelete(todo.id)}
                   onMove={(laneId) => moveTask(todo.id, laneId)}
+                  onDragStart={() => setDraggedTaskId(todo.id)}
+                  onDragEnd={() => setDraggedTaskId(null)}
                 />
               ))}
             </TodoList>

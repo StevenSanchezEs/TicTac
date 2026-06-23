@@ -1,7 +1,34 @@
+import { useEffect, useState } from 'react';
 import styles from './TodoList.module.css'
 export function TodoList(props){
+    const [isDropTarget, setIsDropTarget] = useState(false);
+
+    useEffect(() => {
+        if (!props.isDragging) setIsDropTarget(false);
+    }, [props.isDragging]);
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        if (props.isDragging) setIsDropTarget(true);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        setIsDropTarget(false);
+        props.onDropTask();
+    };
+
     return (
-        <section className={styles.lane}>
+        <section
+            className={`${styles.lane} ${isDropTarget ? styles.dropTarget : ''}`}
+            onDragOver={handleDragOver}
+            onDragEnter={() => props.isDragging && setIsDropTarget(true)}
+            onDragLeave={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsDropTarget(false);
+            }}
+            onDrop={handleDrop}
+        >
             <header className={styles.laneHeader}>
                 <div className={styles.laneTitle}>
                     <span className={styles.laneDot} style={{ backgroundColor: props.lane.color }}></span>
