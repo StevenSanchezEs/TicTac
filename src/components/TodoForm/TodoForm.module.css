@@ -1,60 +1,42 @@
 .todoForm{
     display: flex;
     flex-direction: column;
-    width: 100%;
-    padding: 0 300px;
-    text-align: center;
+    width: min(100% - 32px, 500px);
+    background: white;
+    padding: 32px;
+    border-radius: 18px;
+    color: #1e293b;
+    position: relative;
 }
 
-.todoForm h1{
-    padding-bottom: 35px;
-}
+.eyebrow { color: #64748b; font-weight: 800; font-size: 11px; letter-spacing: .12em; margin-bottom: 8px; }
+.todoForm h1 { font-size: 24px; margin-bottom: 25px; }
+.todoForm label { font-size: 13px; font-weight: 700; margin: 0 0 7px; color: #475569; }
 
-.todoForm textarea{
+.todoForm textarea, .todoForm input, .todoForm select{
     width: 100%;
-    height: 157px;
-    border-radius: 20px;
-    padding: 20px;
-    border: none;
+    border-radius: 9px;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
     outline: none;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    resize: none;
-    font-size: 17px;
+    margin-bottom: 17px;
+    color: #334155;
+    background: #fff;
+    font: inherit;
 }
+.todoForm textarea { height: 115px; resize: vertical; }
+.todoForm textarea:focus, .todoForm input:focus, .todoForm select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px #e0e7ff; }
 
 .closeModal{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 32px;
-    width: 32px;
-    font-size: 24px;
-    background-color: #000000;
+    position: absolute; top: 13px; right: 13px; height: 32px; width: 32px; font-size: 24px;
+    border: 0; background-color: #f1f5f9;
     border-radius: 50%;
-    color: #ebebeb;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    cursor: default;
+    color: #64748b; padding: 0; cursor: pointer;
 }
 
-.closeModal:hover{
-    color: #ffffff;
-}
+.closeModal:hover { background: #e2e8f0; color: #0f172a; }
 
-.todoForm button{
-    border: none;
-    border-radius: 20px;
-    height: 40px;
-    background-color: #000000;
-    color: #ffff;
-    font-weight: bolder;
-    font-size: 15px;
-}
+.submitButton { border: none; border-radius: 9px; height: 44px; background: #4f46e5; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
+.submitButton:hover { background: #4338ca; }
 
-@media (max-height: 768px){
-    .todoForm{
-        padding: 0 20px;
-    }
-}
+@media (max-width: 480px){ .todoForm { padding: 26px 20px; } }

@@ -3,13 +3,46 @@ import { useState } from 'react';
 
 export function TodoForm(props){
     const [taskValue, setTaskValue] = useState('');
+    const [dueAt, setDueAt] = useState(() => {
+        const date = new Date();
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        return date.toISOString().slice(0, 16);
+    });
+    const [laneId, setLaneId] = useState(props.lanes?.[0]?.id || 'todo');
+
+    const isLaneForm = props.mode === 'lane';
+    const submitForm = (event) => {
+        event.preventDefault();
+        if (!taskValue.trim()) return;
+
+        if (isLaneForm) {
+            if (props.addLane(taskValue)) props.setIsOpen(false);
+            return;
+        }
+        props.addTask(taskValue, dueAt, laneId);
+        props.setIsOpen(false);
+    };
 
     return (
-        <div className={styles.todoForm}>
-            <span className={styles.closeModal} onClick={() => {props.setIsOpen(false)}}>x</span>
-            <h1>Escribe una Tarea</h1>
-            <textarea name="description-task" id="description-task" placeholder='Exportar un reporte de ventas del ERP...' onChange={(event) => {setTaskValue(event.target.value)}}></textarea>
-            <button onClick={() => {props.addTask(taskValue, false); props.setIsOpen(false);}} >Guardar</button>
-        </div>
+        <form className={styles.todoForm} onSubmit={submitForm}>
+            <button type="button" className={styles.closeModal} onClick={() => props.setIsOpen(false)} aria-label="Cerrar">×</button>
+            <p className={styles.eyebrow}>{isLaneForm ? 'ORGANIZA TU FLUJO' : 'NUEVA TAREA'}</p>
+            <h1>{isLaneForm ? 'Crea un carril' : 'Planifica una tarea'}</h1>
+            <label htmlFor="task-name">{isLaneForm ? 'Nombre del carril' : '¿Qué necesitas hacer?'}</label>
+            {isLaneForm ? (
+                <input id="task-name" autoFocus value={taskValue} onChange={(event) => setTaskValue(event.target.value)} placeholder="Ej. En revisión" />
+            ) : (
+                <textarea id="task-name" autoFocus value={taskValue} placeholder="Ej. Exportar un reporte de ventas del ERP" onChange={(event) => setTaskValue(event.target.value)} />
+            )}
+            {!isLaneForm && <>
+                <label htmlFor="due-date">Fecha y hora</label>
+                <input id="due-date" type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} required />
+                <label htmlFor="lane">Carril inicial</label>
+                <select id="lane" value={laneId} onChange={(event) => setLaneId(event.target.value)}>
+                    {props.lanes.map(lane => <option key={lane.id} value={lane.id}>{lane.name}</option>)}
+                </select>
+            </>}
+            <button className={styles.submitButton} type="submit">{isLaneForm ? 'Crear carril' : 'Crear tarea'}</button>
+        </form>
     );
 }

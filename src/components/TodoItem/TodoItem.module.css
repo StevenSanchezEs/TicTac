@@ -1,32 +1,22 @@
 .todoItem{
-    display: flex;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    width: 100%;
-    min-height: 70px;
-    max-height: auto;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgb(0, 0, 0);
-    color: white;
-    padding: 25px;
-    border-radius: 20px;
+    background: #fff;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .04);
 }
 
-.todoItemText{
-    font-size: 17px;
-    padding: 0 20px;
-}
+.taskTopline { display: flex; justify-content: space-between; align-items: center; }
+.completeButton, .deleteIcon { border: 0; background: transparent; cursor: pointer; }
+.completeButton { display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid #cbd5e1; border-radius: 50%; color: transparent; }
+.deleteIcon { color: #94a3b8; padding: 4px; }
+.todoItemText{ font-size: 15px; font-weight: 650; color: #334155; line-height: 1.45; margin: 13px 0 18px; overflow-wrap: anywhere; }
 
-.deleteIcon:hover{
-    color: rgb(255, 0, 0);
-}
+.deleteIcon:hover { color: #ef4444; }
 
-.todoItemTextComplete{
-    text-decoration: line-through;
-    color: rgb(151, 151, 151);
-}
+.todoItemTextComplete { text-decoration: line-through; color: #94a3b8; }
+.taskFooter { display: flex; flex-direction: column; gap: 10px; }
+.dueDate { color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.statusLabel select { width: 100%; font: inherit; font-size: 12px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 6px 8px; cursor: pointer; }
 
-.checkIconActive{
-    color: rgb(0, 255, 132);
-}
+.checkIconActive{ color: #fff; background: #22c55e; border-color: #22c55e; }

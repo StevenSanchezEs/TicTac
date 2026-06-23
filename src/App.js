@@ -4,11 +4,12 @@ import { TodoList } from './components/TodoList/TodoList';
 import { TodoItem } from './components/TodoItem/TodoItem';
 import { CreateTodoButton } from './components/CreateTodoButton/CreateTodoButton';
 import { useTodos } from './hooks/useTodos';
-import { getTodoListContent } from './hooks/getTodoListContent';
 import { TaskSkeleton } from './components/TaskSkeleton';
 import { TodoForm } from './components/TodoForm/TodoForm';
 import './App.css'
 import { Modal } from './components/Modal/Modal';
+import { useState } from 'react';
+import { LaneManager } from './components/LaneManager/LaneManager';
 
 /* const defaultTodos = [
   { text: 'Cortar cebolla', completed: true},
@@ -24,6 +25,7 @@ import { Modal } from './components/Modal/Modal';
 function App() {
   
   const {
+    todos,
     searchValue,
     setSearchValue,
     completedTodos,
@@ -35,23 +37,85 @@ function App() {
     setIsOpen,
     isOpen,
     addTask,
+    moveTask,
+    lanes,
+    addLane,
+    renameLane,
+    moveLane,
+    deleteLane,
   } = useTodos();
+  const [modalMode, setModalMode] = useState('task');
+
+  const openModal = (mode) => {
+    setModalMode(mode);
+    setIsOpen(true);
+  };
   
   return (
-    <>
+    <main className="appShell">
+      <header className="appHeader">
+        <div>
+          <p className="eyebrow">ORGANIZA TU DÍA</p>
+          <h1>Mi tablero</h1>
+          <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
+        </div>
+        <div className="headerActions">
+          <button className="secondaryButton" onClick={() => openModal('manage-lanes')}>
+            Gestionar carriles
+          </button>
+          <button className="secondaryButton" onClick={() => openModal('lane')}>
+            <span>+</span> Nuevo carril
+          </button>
+          <button className="primaryButton" onClick={() => openModal('task')}>
+            <span>+</span> Nueva tarea
+          </button>
+        </div>
+      </header>
 
-      <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
       <TodoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-      <TodoList>
-        {loading ? <TaskSkeleton /> : getTodoListContent(searchedTodos, searchValue, onCompleted, onDelete, TodoItem)}
-      </TodoList>
-      <CreateTodoButton setIsOpen={setIsOpen}/>
+      <section className="board" aria-label="Tablero de tareas">
+        {lanes.map(lane => {
+          const laneTodos = searchedTodos.filter(todo => (todo.laneId || 'todo') === lane.id);
+          return (
+            <TodoList key={lane.id} lane={lane} count={laneTodos.length}>
+              {loading ? <TaskSkeleton /> : laneTodos.map(todo => (
+                <TodoItem
+                  key={todo.id}
+                  {...todo}
+                  lanes={lanes}
+                  onCompleted={() => onCompleted(todo.id)}
+                  onDelete={() => onDelete(todo.id)}
+                  onMove={(laneId) => moveTask(todo.id, laneId)}
+                />
+              ))}
+            </TodoList>
+          );
+        })}
+      </section>
+      <CreateTodoButton onClick={() => openModal('task')}/>
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
-          <TodoForm setIsOpen={setIsOpen} addTask={addTask} />
+          {modalMode === 'manage-lanes' ? (
+            <LaneManager
+              lanes={lanes}
+              todos={todos}
+              setIsOpen={setIsOpen}
+              renameLane={renameLane}
+              moveLane={moveLane}
+              deleteLane={deleteLane}
+            />
+          ) : (
+            <TodoForm
+              mode={modalMode}
+              setIsOpen={setIsOpen}
+              addTask={addTask}
+              addLane={addLane}
+              lanes={lanes}
+            />
+          )}
         </Modal>
       )}
-    </>
+    </main>
   );
 }
 
