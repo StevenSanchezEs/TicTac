@@ -20,6 +20,5 @@
 .todoItemTextComplete { text-decoration: line-through; color: #94a3b8; }
 .taskFooter { display: flex; flex-direction: column; gap: 10px; }
 .dueDate { color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 6px; }
-.statusLabel select { width: 100%; font: inherit; font-size: 12px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 6px 8px; cursor: pointer; }
 
 .checkIconActive{ color: #fff; background: #22c55e; border-color: #22c55e; }

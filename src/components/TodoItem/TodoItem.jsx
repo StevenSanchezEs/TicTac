@@ -29,12 +29,6 @@ export function TodoItem(props){
         <p className={`${styles.todoItemText} ${props.completed ? styles.todoItemTextComplete : ''}`}>{props.text}</p>
         <div className={styles.taskFooter}>
           <span className={styles.dueDate}><i className="bi bi-calendar3"></i>{formattedDate}</span>
-          <label className={styles.statusLabel}>
-            <span className="srOnly">Mover tarea a</span>
-            <select value={props.laneId || 'todo'} onChange={(event) => props.onMove(event.target.value)}>
-              {props.lanes.map(lane => <option key={lane.id} value={lane.id}>{lane.name}</option>)}
-            </select>
-          </label>
         </div>
       </li>
     );
