@@ -42,10 +42,12 @@ function App() {
     addLane,
     renameLane,
     moveLane,
+    reorderLane,
     deleteLane,
   } = useTodos();
   const [modalMode, setModalMode] = useState('task');
   const [draggedTaskId, setDraggedTaskId] = useState(null);
+  const [draggedLaneId, setDraggedLaneId] = useState(null);
 
   const openModal = (mode) => {
     setModalMode(mode);
@@ -55,6 +57,11 @@ function App() {
   const handleDropTask = (laneId) => {
     if (draggedTaskId) moveTask(draggedTaskId, laneId);
     setDraggedTaskId(null);
+  };
+
+  const handleDropLane = (targetLaneId) => {
+    if (draggedLaneId) reorderLane(draggedLaneId, targetLaneId);
+    setDraggedLaneId(null);
   };
   
   return (
@@ -88,7 +95,11 @@ function App() {
               lane={lane}
               count={laneTodos.length}
               onDropTask={() => handleDropTask(lane.id)}
-              isDragging={Boolean(draggedTaskId)}
+              isDraggingTask={Boolean(draggedTaskId)}
+              onDropLane={() => handleDropLane(lane.id)}
+              isDraggingLane={Boolean(draggedLaneId)}
+              onLaneDragStart={() => setDraggedLaneId(lane.id)}
+              onLaneDragEnd={() => setDraggedLaneId(null)}
             >
               {loading ? <TaskSkeleton /> : laneTodos.map(todo => (
                 <TodoItem

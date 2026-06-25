@@ -122,6 +122,24 @@ export function useTodos() {
     });
   };
 
+  const reorderLane = (sourceId, targetId) => {
+    if (!sourceId || sourceId === targetId) return;
+
+    setLanes(currentLanes => {
+      const sourceIndex = currentLanes.findIndex(lane => lane.id === sourceId);
+      const targetIndex = currentLanes.findIndex(lane => lane.id === targetId);
+      if (sourceIndex === -1 || targetIndex === -1) return currentLanes;
+
+      const orderedLanes = [...currentLanes];
+      const [sourceLane] = orderedLanes.splice(sourceIndex, 1);
+      // Al mover hacia la derecha, el índice original del destino ya apunta
+      // a la posición posterior a ese carril después de extraer el origen.
+      // Al mover hacia la izquierda, apunta a la posición previa al destino.
+      orderedLanes.splice(targetIndex, 0, sourceLane);
+      return orderedLanes;
+    });
+  };
+
   const deleteLane = (id) => {
     if (lanes.length <= 1) return false;
     const replacementLane = lanes.find(lane => lane.id !== id);
@@ -151,6 +169,7 @@ export function useTodos() {
     addLane,
     renameLane,
     moveLane,
+    reorderLane,
     deleteLane,
   };
 }

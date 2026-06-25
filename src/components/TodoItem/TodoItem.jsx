@@ -12,6 +12,7 @@ export function TodoItem(props){
         draggable
         onDragStart={(event) => {
           event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('application/x-tictac-task', props.id);
           props.onDragStart();
         }}
         onDragEnd={props.onDragEnd}
