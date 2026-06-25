@@ -4,7 +4,9 @@ import { useState } from 'react';
 export function TodoForm(props){
     const [taskValue, setTaskValue] = useState('');
     const [dueAt, setDueAt] = useState('');
-    const [laneId, setLaneId] = useState(props.lanes?.[0]?.id || 'todo');
+    const [laneId, setLaneId] = useState(
+        props.lanes?.some(lane => lane.id === 'todo') ? 'todo' : props.lanes?.[0]?.id || 'todo'
+    );
 
     const isLaneForm = props.mode === 'lane';
     const submitForm = (event) => {

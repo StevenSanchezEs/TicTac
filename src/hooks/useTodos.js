@@ -8,6 +8,8 @@ const DEFAULT_LANES = [
 ];
 
 const DONE_LANE_STORAGE_KEY = 'todo-done-lane-id';
+const BASE_LANE = DEFAULT_LANES[0];
+const BASE_LANE_ID = BASE_LANE.id;
 
 const getFallbackDoneLaneId = (lanes) => {
   return lanes.find(lane => lane.id === 'done')?.id || lanes[lanes.length - 1]?.id || 'done';
@@ -19,7 +21,14 @@ const getValidDoneLaneId = (lanes, doneLaneId) => {
 
 const getSavedLanes = () => {
   const savedLanes = localStorage.getItem('todo-lanes');
-  return savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+  const parsedLanes = savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+  const normalizedLanes = parsedLanes.map(lane =>
+    lane.id === BASE_LANE_ID ? { ...lane, name: BASE_LANE.name, color: BASE_LANE.color } : lane
+  );
+
+  return normalizedLanes.some(lane => lane.id === BASE_LANE_ID)
+    ? normalizedLanes
+    : [BASE_LANE, ...normalizedLanes];
 };
 
 const migrateStoredTodos = (storedTodos) => {
@@ -27,17 +36,21 @@ const migrateStoredTodos = (storedTodos) => {
   const savedLanes = getSavedLanes();
   const savedDoneLaneId = localStorage.getItem(DONE_LANE_STORAGE_KEY);
   const validDoneLaneId = getValidDoneLaneId(savedLanes, savedDoneLaneId);
-  const defaultLaneId = savedLanes[0]?.id || 'todo';
+  const defaultLaneId = savedLanes.find(lane => lane.id === BASE_LANE_ID)?.id || BASE_LANE_ID;
+  const savedLaneIds = savedLanes.map(lane => lane.id);
 
   return storedTodos.map(todo => {
     const completed = Boolean(todo.completed);
+    const validLaneId = savedLaneIds.includes(todo.laneId)
+      ? todo.laneId
+      : (completed ? validDoneLaneId : defaultLaneId);
 
     return {
       ...todo,
       id: todo.id || uuidv4(),
       createdAt: todo.createdAt || now,
       dueAt: todo.dueAt || null,
-      laneId: todo.laneId || (completed ? validDoneLaneId : defaultLaneId),
+      laneId: validLaneId,
       completed,
     };
   });
@@ -134,7 +147,7 @@ export function useTodos() {
   }, [isOpen])
 
   const addTask = (text, dueAt, laneId) => {
-    const selectedLaneId = laneId || lanes[0]?.id || 'todo';
+    const selectedLaneId = laneId || BASE_LANE_ID;
     const newItem = {
       id: uuidv4(),
       text: text.trim(),
@@ -184,6 +197,7 @@ export function useTodos() {
   };
 
   const renameLane = (id, name) => {
+    if (id === BASE_LANE_ID) return false;
     const trimmedName = name.trim();
     if (!trimmedName) return false;
     setLanes(currentLanes => currentLanes.map(lane =>
@@ -223,8 +237,9 @@ export function useTodos() {
   };
 
   const deleteLane = (id) => {
-    if (lanes.length <= 1) return false;
-    const replacementLane = lanes.find(lane => lane.id !== id);
+    if (id === BASE_LANE_ID) return false;
+    const replacementLane = lanes.find(lane => lane.id === BASE_LANE_ID) || lanes.find(lane => lane.id !== id);
+    if (!replacementLane) return false;
     const nextDoneLaneId = id === effectiveDoneLaneId ? replacementLane.id : effectiveDoneLaneId;
     if (id === effectiveDoneLaneId) setDoneLaneIdState(nextDoneLaneId);
     setTodos(currentTodos => currentTodos.map(todo =>
