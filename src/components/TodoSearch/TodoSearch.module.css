@@ -10,14 +10,15 @@
     align-items: center;
     max-width: 420px;
     width: 100%; height: 42px; font-size: 17px; border-radius: 9px; padding: 0 13px;
-    background-color: #fff; border: 1px solid #e2e8f0;
+    background-color: var(--surface); border: 1px solid var(--border);
     outline: none;
     gap: 10px; /* Espacio entre el ícono y el input */
+    box-shadow: var(--shadow-card);
 }
 
 .icon {
     font-size: 24px;
-    color: #888; /* Color del ícono */
+    color: var(--muted-faint); /* Color del ícono */
 }
 
 .TodoSearch {
@@ -25,8 +26,11 @@
     border: none;
     outline: none;
     background: transparent; /* Fondo transparente para mostrar el color del contenedor */
+    color: var(--text-soft);
     font-size: 14px;
 }
+
+.TodoSearch::placeholder { color: var(--muted-faint); }
 
 @media (max-width: 768px){
     .todoContainer{

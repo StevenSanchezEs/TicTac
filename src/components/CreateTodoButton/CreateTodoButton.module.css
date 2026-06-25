@@ -1,12 +1,12 @@
 .createTodoButton{
     position: fixed;
     display: inline-flex;
-    width: 54px; height: 54px; bottom: 22px; right: 24px; background-color: #4f46e5;
+    width: 54px; height: 54px; bottom: 22px; right: 24px; background-color: var(--primary);
     color: #fff; font-size: 28px; border-radius: 50%;
     justify-content: center;
     align-items: center;
-    border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(79,70,229,.3);
+    border: none; cursor: pointer; box-shadow: var(--shadow-card);
     padding: 0;
 }
 
-.createTodoButton:hover{ background: #4338ca; transform: translateY(-2px); }
+.createTodoButton:hover{ background: var(--primary-hover); transform: translateY(-2px); }

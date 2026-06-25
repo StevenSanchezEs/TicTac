@@ -8,16 +8,16 @@
     transition: background-color .15s, box-shadow .15s;
 }
 
-.dropTarget { background: #eef2ff; box-shadow: inset 0 0 0 2px #818cf8; }
+.dropTarget { background: var(--primary-soft); box-shadow: inset 0 0 0 2px var(--primary); }
 
 .laneHeader { padding: 0 4px 14px; cursor: grab; user-select: none; }
 .laneHeader:active { cursor: grabbing; }
 
 .laneTitle { display: flex; align-items: center; gap: 9px; }
-.laneTitle h2 { font-size: 15px; font-weight: 700; color: #1e293b; }
+.laneTitle h2 { font-size: 15px; font-weight: 700; color: var(--text); }
 .laneDot { width: 10px; height: 10px; border-radius: 50%; }
-.doneBadge { color: #15803d; background: #dcfce7; border-radius: 99px; padding: 2px 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
-.count { color: #64748b; background: #e2e8f0; border-radius: 99px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+.doneBadge { color: var(--success-text); background: var(--success-soft); border-radius: 99px; padding: 2px 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.count { color: var(--muted); background: var(--border); border-radius: 99px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
 
 .TodoList { list-style: none; display: grid; gap: 12px; }
-.emptyState { padding: 20px 12px; color: #94a3b8; font-size: 14px; text-align: center; border: 1px dashed #cbd5e1; border-radius: 12px; }
+.emptyState { padding: 20px 12px; color: var(--muted-faint); font-size: 14px; text-align: center; border: 1px dashed var(--border-strong); border-radius: 12px; }

@@ -7,7 +7,7 @@ import { TaskSkeleton } from './components/TaskSkeleton';
 import { TodoForm } from './components/TodoForm/TodoForm';
 import './App.css'
 import { Modal } from './components/Modal/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LaneManager } from './components/LaneManager/LaneManager';
 
 /* const defaultTodos = [
@@ -50,6 +50,13 @@ function App() {
   const [modalMode, setModalMode] = useState('task');
   const [draggedTaskId, setDraggedTaskId] = useState(null);
   const [draggedLaneId, setDraggedLaneId] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('tictac-theme') || 'light');
+  const isDarkTheme = theme === 'dark';
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('tictac-theme', theme);
+  }, [theme]);
 
   const openModal = (mode) => {
     setModalMode(mode);
@@ -75,6 +82,16 @@ function App() {
           <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
         </div>
         <div className="headerActions">
+          <button
+            className="themeButton"
+            type="button"
+            onClick={() => setTheme(currentTheme => currentTheme === 'dark' ? 'light' : 'dark')}
+            aria-label={isDarkTheme ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            aria-pressed={isDarkTheme}
+          >
+            <i className={`bi ${isDarkTheme ? 'bi-sun' : 'bi-moon-stars'}`}></i>
+            {isDarkTheme ? 'Tema claro' : 'Tema oscuro'}
+          </button>
           <button className="secondaryButton" onClick={() => openModal('manage-lanes')}>
             Gestionar carriles
           </button>

@@ -4,16 +4,17 @@
     box-sizing: border-box;
 }
 
-.appShell { min-height: 100vh; padding: 50px 32px 96px; }
+.appShell { min-height: 100vh; padding: 50px 32px 96px; background: radial-gradient(circle at top left, var(--primary-soft), transparent 34%), var(--bg); transition: background-color .2s ease; }
 .appHeader { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; }
-.eyebrow { color: #6366f1; font-size: 11px; font-weight: 800; letter-spacing: .14em; margin-bottom: 7px; }
-.appHeader h1 { font-size: clamp(30px, 4vw, 42px); color: #0f172a; letter-spacing: -.04em; }
+.eyebrow { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: .14em; margin-bottom: 7px; }
+.appHeader h1 { font-size: clamp(30px, 4vw, 42px); color: var(--text); letter-spacing: -.04em; }
 .headerActions { display: flex; gap: 10px; flex-wrap: wrap; }
-.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 15px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-.primaryButton { color: #fff; background: #4f46e5; border: 1px solid #4f46e5; }
-.primaryButton:hover { background: #4338ca; }
-.secondaryButton { color: #475569; background: #fff; border: 1px solid #cbd5e1; }
-.secondaryButton:hover { color: #0f172a; background: #f8fafc; }
+.primaryButton, .secondaryButton, .themeButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 15px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease; }
+.primaryButton { color: #fff; background: var(--primary); border: 1px solid var(--primary); }
+.primaryButton:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.secondaryButton, .themeButton { color: var(--muted-strong); background: var(--surface); border: 1px solid var(--border-strong); }
+.secondaryButton:hover, .themeButton:hover { color: var(--text); background: var(--surface-muted); }
+.themeButton { box-shadow: var(--shadow-card); }
 .board { max-width: 1280px; margin: 28px auto 0; display: flex; align-items: stretch; gap: 20px; overflow-x: auto; padding: 4px 2px 24px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
