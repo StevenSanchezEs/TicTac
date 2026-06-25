@@ -122,7 +122,7 @@ function App() {
           );
         })}
       </section>
-      <CreateTodoButton onClick={() => openModal('task')}/>
+      {/* <CreateTodoButton onClick={() => openModal('task')}/> */}
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
           {modalMode === 'manage-lanes' ? (
