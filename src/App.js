@@ -2,7 +2,6 @@ import { TodoCounter } from './components/TodoCounter/TodoCounter';
 import { TodoSearch } from './components/TodoSearch/TodoSearch';
 import { TodoList } from './components/TodoList/TodoList';
 import { TodoItem } from './components/TodoItem/TodoItem';
-import { CreateTodoButton } from './components/CreateTodoButton/CreateTodoButton';
 import { useTodos } from './hooks/useTodos';
 import { TaskSkeleton } from './components/TaskSkeleton';
 import { TodoForm } from './components/TodoForm/TodoForm';

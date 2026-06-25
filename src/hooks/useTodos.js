@@ -17,26 +17,46 @@ const getValidDoneLaneId = (lanes, doneLaneId) => {
   return lanes.some(lane => lane.id === doneLaneId) ? doneLaneId : getFallbackDoneLaneId(lanes);
 };
 
+const getSavedLanes = () => {
+  const savedLanes = localStorage.getItem('todo-lanes');
+  return savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+};
+
+const migrateStoredTodos = (storedTodos) => {
+  const now = new Date().toISOString();
+  const savedLanes = getSavedLanes();
+  const savedDoneLaneId = localStorage.getItem(DONE_LANE_STORAGE_KEY);
+  const validDoneLaneId = getValidDoneLaneId(savedLanes, savedDoneLaneId);
+  const defaultLaneId = savedLanes[0]?.id || 'todo';
+
+  return storedTodos.map(todo => {
+    const completed = Boolean(todo.completed);
+
+    return {
+      ...todo,
+      id: todo.id || uuidv4(),
+      createdAt: todo.createdAt || now,
+      dueAt: todo.dueAt || null,
+      laneId: todo.laneId || (completed ? validDoneLaneId : defaultLaneId),
+      completed,
+    };
+  });
+};
+
 export function useTodos() {
   const [todos, setTodos] = useState(() => {
     const savedTodos = localStorage.getItem('todos');
     const parsedTodos = savedTodos ? JSON.parse(savedTodos) : [];
-    const now = new Date().toISOString();
-    return parsedTodos.map(todo => ({
-      ...todo,
-      createdAt: todo.createdAt || now,
-    }));
+    return migrateStoredTodos(parsedTodos);
   });
   
   const [searchValue, setSearchValue] = useState('');
   const [lanes, setLanes] = useState(() => {
-    const savedLanes = localStorage.getItem('todo-lanes');
-    return savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+    return getSavedLanes();
   });
 
   const [doneLaneId, setDoneLaneIdState] = useState(() => {
-    const savedLanes = localStorage.getItem('todo-lanes');
-    const initialLanes = savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+    const initialLanes = getSavedLanes();
     const savedDoneLaneId = localStorage.getItem(DONE_LANE_STORAGE_KEY);
     return getValidDoneLaneId(initialLanes, savedDoneLaneId);
   });
