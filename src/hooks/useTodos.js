@@ -74,9 +74,15 @@ export function useTodos() {
   ), [todos, searchValue]);
 
   const onCompleted = (id) => {
-    setTodos(currentTodos => currentTodos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    const pendingLaneId = lanes.find(lane => lane.id !== effectiveDoneLaneId)?.id;
+    setTodos(currentTodos => currentTodos.map(todo => {
+      if (todo.id !== id) return todo;
+
+      const isDone = todo.completed || (todo.laneId || 'todo') === effectiveDoneLaneId;
+      if (isDone && pendingLaneId) return { ...todo, laneId: pendingLaneId, completed: false };
+
+      return { ...todo, laneId: effectiveDoneLaneId, completed: true };
+    }));
   };
 
   const onDelete = (id) => {
@@ -124,6 +130,16 @@ export function useTodos() {
     setTodos(currentTodos => currentTodos.map(todo =>
       todo.id === id ? { ...todo, laneId, completed: laneId === effectiveDoneLaneId } : todo
     ));
+  };
+
+  const updateTask = (id, text, dueAt) => {
+    const trimmedText = text.trim();
+    if (!trimmedText) return false;
+
+    setTodos(currentTodos => currentTodos.map(todo =>
+      todo.id === id ? { ...todo, text: trimmedText, dueAt: dueAt || null } : todo
+    ));
+    return true;
   };
 
   const setDoneLane = (laneId) => {
@@ -217,6 +233,7 @@ export function useTodos() {
     isOpen,
     addTask,
     moveTask,
+    updateTask,
     addLane,
     renameLane,
     moveLane,

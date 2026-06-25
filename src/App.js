@@ -38,6 +38,7 @@ function App() {
     isOpen,
     addTask,
     moveTask,
+    updateTask,
     lanes,
     addLane,
     renameLane,
@@ -111,6 +112,7 @@ function App() {
                   lanes={lanes}
                   onCompleted={() => onCompleted(todo.id)}
                   onDelete={() => onDelete(todo.id)}
+                  onUpdate={(text, dueAt) => updateTask(todo.id, text, dueAt)}
                   onMove={(laneId) => moveTask(todo.id, laneId)}
                   onDragStart={() => setDraggedTaskId(todo.id)}
                   onDragEnd={() => setDraggedTaskId(null)}
