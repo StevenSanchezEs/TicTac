@@ -19,6 +19,7 @@
 
 .todoItemTextComplete { text-decoration: line-through; color: #94a3b8; }
 .taskFooter { display: flex; flex-direction: column; gap: 10px; }
-.dueDate { color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.taskDate { color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.mutedDate { color: #94a3b8; }
 
 .checkIconActive{ color: #fff; background: #22c55e; border-color: #22c55e; }

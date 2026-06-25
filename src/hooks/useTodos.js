@@ -77,6 +77,7 @@ export function useTodos() {
     const newItem = {
       id: uuidv4(),
       text: text.trim(),
+      createdAt: new Date().toISOString(),
       dueAt,
       laneId: laneId || lanes[0]?.id || 'todo',
       completed: false,

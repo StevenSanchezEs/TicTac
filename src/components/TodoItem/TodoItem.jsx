@@ -2,9 +2,26 @@ import styles from './TodoItem.module.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export function TodoItem(props){
-    const formattedDate = props.dueAt
-      ? new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(props.dueAt))
-      : 'Sin fecha programada';
+    const formatDate = (date) => new Intl.DateTimeFormat('es-MX', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(date));
+
+    const formattedCreatedAt = props.createdAt
+      ? formatDate(props.createdAt)
+      : 'Sin registro de creación';
+
+    const formattedDueAt = props.dueAt
+      ? formatDate(props.dueAt)
+      : 'Sin vencimiento';
+
+    const dueDateClassName = props.dueAt
+      ? styles.taskDate
+      : `${styles.taskDate} ${styles.mutedDate}`;
+
+    const createdDateClassName = props.createdAt
+      ? styles.taskDate
+      : `${styles.taskDate} ${styles.mutedDate}`;
 
     return (
       <li
@@ -29,7 +46,8 @@ export function TodoItem(props){
         </div>
         <p className={`${styles.todoItemText} ${props.completed ? styles.todoItemTextComplete : ''}`}>{props.text}</p>
         <div className={styles.taskFooter}>
-          <span className={styles.dueDate}><i className="bi bi-calendar3"></i>{formattedDate}</span>
+          <span className={createdDateClassName}><i className="bi bi-plus-circle"></i>Creada: {formattedCreatedAt}</span>
+          <span className={dueDateClassName}><i className="bi bi-calendar3"></i>Vence: {formattedDueAt}</span>
         </div>
       </li>
     );

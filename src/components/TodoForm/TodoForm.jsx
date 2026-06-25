@@ -3,11 +3,7 @@ import { useState } from 'react';
 
 export function TodoForm(props){
     const [taskValue, setTaskValue] = useState('');
-    const [dueAt, setDueAt] = useState(() => {
-        const date = new Date();
-        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-        return date.toISOString().slice(0, 16);
-    });
+    const [dueAt, setDueAt] = useState('');
     const [laneId, setLaneId] = useState(props.lanes?.[0]?.id || 'todo');
 
     const isLaneForm = props.mode === 'lane';
@@ -19,7 +15,7 @@ export function TodoForm(props){
             if (props.addLane(taskValue)) props.setIsOpen(false);
             return;
         }
-        props.addTask(taskValue, dueAt, laneId);
+        props.addTask(taskValue, dueAt || null, laneId);
         props.setIsOpen(false);
     };
 
@@ -35,8 +31,8 @@ export function TodoForm(props){
                 <textarea id="task-name" autoFocus value={taskValue} placeholder="Ej. Exportar un reporte de ventas del ERP" onChange={(event) => setTaskValue(event.target.value)} />
             )}
             {!isLaneForm && <>
-                <label htmlFor="due-date">Fecha y hora</label>
-                <input id="due-date" type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} required />
+                <label htmlFor="due-date">Fecha y hora de vencimiento <span className={styles.optional}>(opcional)</span></label>
+                <input id="due-date" type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} />
                 <label htmlFor="lane">Carril inicial</label>
                 <select id="lane" value={laneId} onChange={(event) => setLaneId(event.target.value)}>
                     {props.lanes.map(lane => <option key={lane.id} value={lane.id}>{lane.name}</option>)}

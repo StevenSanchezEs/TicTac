@@ -12,6 +12,7 @@
 .eyebrow { color: #64748b; font-weight: 800; font-size: 11px; letter-spacing: .12em; margin-bottom: 8px; }
 .todoForm h1 { font-size: 24px; margin-bottom: 25px; }
 .todoForm label { font-size: 13px; font-weight: 700; margin: 0 0 7px; color: #475569; }
+.optional { color: #94a3b8; font-weight: 600; }
 
 .todoForm textarea, .todoForm input, .todoForm select{
     width: 100%;
