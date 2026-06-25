@@ -44,6 +44,8 @@ function App() {
     moveLane,
     reorderLane,
     deleteLane,
+    doneLaneId,
+    setDoneLane,
   } = useTodos();
   const [modalMode, setModalMode] = useState('task');
   const [draggedTaskId, setDraggedTaskId] = useState(null);
@@ -94,6 +96,7 @@ function App() {
               key={lane.id}
               lane={lane}
               count={laneTodos.length}
+              isDoneLane={lane.id === doneLaneId}
               onDropTask={() => handleDropTask(lane.id)}
               isDraggingTask={Boolean(draggedTaskId)}
               onDropLane={() => handleDropLane(lane.id)}
@@ -128,6 +131,8 @@ function App() {
               renameLane={renameLane}
               moveLane={moveLane}
               deleteLane={deleteLane}
+              doneLaneId={doneLaneId}
+              setDoneLane={setDoneLane}
             />
           ) : (
             <TodoForm

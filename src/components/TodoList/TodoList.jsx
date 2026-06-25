@@ -70,6 +70,7 @@ export function TodoList(props){
                 <div className={styles.laneTitle}>
                     <span className={styles.laneDot} style={{ backgroundColor: props.lane.color }}></span>
                     <h2>{props.lane.name}</h2>
+                    {props.isDoneLane && <span className={styles.doneBadge}>Done</span>}
                     <span className={styles.count}>{props.count}</span>
                 </div>
             </header>

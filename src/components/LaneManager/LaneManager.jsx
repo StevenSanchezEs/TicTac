@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from './LaneManager.module.css';
 
-export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, deleteLane }) {
+export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, deleteLane, doneLaneId, setDoneLane }) {
   const [editingLaneId, setEditingLaneId] = useState(null);
   const [name, setName] = useState('');
 
@@ -28,7 +28,7 @@ export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, del
       <button type="button" className={styles.close} onClick={() => setIsOpen(false)} aria-label="Cerrar">×</button>
       <p className={styles.eyebrow}>CONFIGURACIÓN DEL TABLERO</p>
       <h1 id="lane-manager-title">Gestionar carriles</h1>
-      <p className={styles.help}>Usa las flechas para definir el orden en que aparecen en tu tablero.</p>
+      <p className={styles.help}>Usa las flechas para definir el orden y marca qué carril representa las tareas terminadas.</p>
 
       <ul className={styles.laneList}>
         {lanes.map((lane, index) => (
@@ -42,6 +42,14 @@ export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, del
             ) : (
               <span className={styles.laneName}>{lane.name}</span>
             )}
+            <button
+              type="button"
+              className={`${styles.doneSelector} ${doneLaneId === lane.id ? styles.doneSelectorActive : ''}`}
+              onClick={() => setDoneLane(lane.id)}
+              aria-pressed={doneLaneId === lane.id}
+            >
+              {doneLaneId === lane.id ? 'Carril done' : 'Usar como done'}
+            </button>
             {editingLaneId !== lane.id && <div className={styles.actions}>
               <button type="button" onClick={() => moveLane(lane.id, -1)} disabled={index === 0} aria-label={`Mover ${lane.name} a la izquierda`}><i className="bi bi-arrow-left"></i></button>
               <button type="button" onClick={() => moveLane(lane.id, 1)} disabled={index === lanes.length - 1} aria-label={`Mover ${lane.name} a la derecha`}><i className="bi bi-arrow-right"></i></button>

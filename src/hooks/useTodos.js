@@ -7,10 +7,25 @@ const DEFAULT_LANES = [
   { id: 'done', name: 'Terminado', color: '#22c55e' },
 ];
 
+const DONE_LANE_STORAGE_KEY = 'todo-done-lane-id';
+
+const getFallbackDoneLaneId = (lanes) => {
+  return lanes.find(lane => lane.id === 'done')?.id || lanes[lanes.length - 1]?.id || 'done';
+};
+
+const getValidDoneLaneId = (lanes, doneLaneId) => {
+  return lanes.some(lane => lane.id === doneLaneId) ? doneLaneId : getFallbackDoneLaneId(lanes);
+};
+
 export function useTodos() {
   const [todos, setTodos] = useState(() => {
     const savedTodos = localStorage.getItem('todos');
-    return savedTodos ? JSON.parse(savedTodos) : [];
+    const parsedTodos = savedTodos ? JSON.parse(savedTodos) : [];
+    const now = new Date().toISOString();
+    return parsedTodos.map(todo => ({
+      ...todo,
+      createdAt: todo.createdAt || now,
+    }));
   });
   
   const [searchValue, setSearchValue] = useState('');
@@ -19,6 +34,17 @@ export function useTodos() {
     return savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
   });
 
+  const [doneLaneId, setDoneLaneIdState] = useState(() => {
+    const savedLanes = localStorage.getItem('todo-lanes');
+    const initialLanes = savedLanes ? JSON.parse(savedLanes) : DEFAULT_LANES;
+    const savedDoneLaneId = localStorage.getItem(DONE_LANE_STORAGE_KEY);
+    return getValidDoneLaneId(initialLanes, savedDoneLaneId);
+  });
+
+  const effectiveDoneLaneId = useMemo(() => {
+    return getValidDoneLaneId(lanes, doneLaneId);
+  }, [lanes, doneLaneId]);
+
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
@@ -26,6 +52,14 @@ export function useTodos() {
   useEffect(() => {
     localStorage.setItem('todo-lanes', JSON.stringify(lanes));
   }, [lanes]);
+
+  useEffect(() => {
+    if (doneLaneId !== effectiveDoneLaneId) setDoneLaneIdState(effectiveDoneLaneId);
+  }, [doneLaneId, effectiveDoneLaneId]);
+
+  useEffect(() => {
+    localStorage.setItem(DONE_LANE_STORAGE_KEY, effectiveDoneLaneId);
+  }, [effectiveDoneLaneId]);
 
   const completedTodos = useMemo(() => {
     return todos.filter(todo => todo.completed).length;
@@ -74,21 +108,32 @@ export function useTodos() {
   }, [isOpen])
 
   const addTask = (text, dueAt, laneId) => {
+    const selectedLaneId = laneId || lanes[0]?.id || 'todo';
     const newItem = {
       id: uuidv4(),
       text: text.trim(),
       createdAt: new Date().toISOString(),
       dueAt,
-      laneId: laneId || lanes[0]?.id || 'todo',
-      completed: false,
+      laneId: selectedLaneId,
+      completed: selectedLaneId === effectiveDoneLaneId,
     };
     setTodos(currentTodos => [...currentTodos, newItem]);
   };
 
   const moveTask = (id, laneId) => {
     setTodos(currentTodos => currentTodos.map(todo =>
-      todo.id === id ? { ...todo, laneId } : todo
+      todo.id === id ? { ...todo, laneId, completed: laneId === effectiveDoneLaneId } : todo
     ));
+  };
+
+  const setDoneLane = (laneId) => {
+    if (!lanes.some(lane => lane.id === laneId)) return false;
+    setDoneLaneIdState(laneId);
+    setTodos(currentTodos => currentTodos.map(todo => ({
+      ...todo,
+      completed: (todo.laneId || 'todo') === laneId,
+    })));
+    return true;
   };
 
   const addLane = (name) => {
@@ -144,8 +189,12 @@ export function useTodos() {
   const deleteLane = (id) => {
     if (lanes.length <= 1) return false;
     const replacementLane = lanes.find(lane => lane.id !== id);
+    const nextDoneLaneId = id === effectiveDoneLaneId ? replacementLane.id : effectiveDoneLaneId;
+    if (id === effectiveDoneLaneId) setDoneLaneIdState(nextDoneLaneId);
     setTodos(currentTodos => currentTodos.map(todo =>
-      (todo.laneId || 'todo') === id ? { ...todo, laneId: replacementLane.id } : todo
+      (todo.laneId || 'todo') === id
+        ? { ...todo, laneId: replacementLane.id, completed: replacementLane.id === nextDoneLaneId }
+        : todo
     ));
     setLanes(currentLanes => currentLanes.filter(lane => lane.id !== id));
     return true;
@@ -160,6 +209,7 @@ export function useTodos() {
     totalTodos,
     searchedTodos,
     lanes,
+    doneLaneId: effectiveDoneLaneId,
     onCompleted,
     onDelete,
     loading,
@@ -172,5 +222,6 @@ export function useTodos() {
     moveLane,
     reorderLane,
     deleteLane,
+    setDoneLane,
   };
 }
