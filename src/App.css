@@ -4,7 +4,36 @@
     box-sizing: border-box;
 }
 
-.appShell { min-height: 100vh; padding: 50px 32px 96px; background: radial-gradient(circle at top left, var(--primary-soft), transparent 34%), var(--bg); transition: background-color .2s ease; }
+.appShell {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px 24px;
+  background: radial-gradient(circle at top left, var(--primary-soft), transparent 34%), var(--bg);
+  transition: background-color .2s ease;
+}
+
+.workspaceControls {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin: -50px -32px 0;
+  padding: 18px 32px 18px;
+  background: radial-gradient(circle at top left, var(--primary-soft), transparent 34%), var(--bg);
+  border-bottom: 1px solid transparent;
+}
+
+.workspaceControls::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -14px;
+  height: 14px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--bg), transparent);
+}
 .appHeader { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; }
 .eyebrow { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: .14em; margin-bottom: 7px; }
 .appHeader h1 { font-size: clamp(30px, 4vw, 42px); color: var(--text); letter-spacing: -.04em; }
@@ -19,7 +48,19 @@
 .themeButton { box-shadow: var(--shadow-card); }
 .profileButton { color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-card); }
 .profileButton:hover { background: var(--surface-muted); border-color: var(--primary); }
-.board { max-width: 1280px; margin: 28px auto 0; display: flex; align-items: stretch; gap: 20px; overflow-x: auto; padding: 4px 2px 24px; }
+.board {
+  width: 100%;
+  max-width: 1280px;
+  flex: 1;
+  min-height: 0;
+  margin: 48px auto 0;
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 24px;
+}
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .settingsPanel { width: min(100% - 32px, 760px); max-height: min(86vh, 820px); overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px; position: relative; color: var(--text); box-shadow: var(--shadow-card); }
 .settingsClose { position: absolute; top: 13px; right: 13px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bg-soft); color: var(--muted); font-size: 24px; cursor: pointer; }
@@ -30,13 +71,171 @@
 .settingsTabs button:hover { color: var(--text); }
 .settingsTabs .settingsTabActive { color: var(--primary); border-bottom-color: var(--primary); }
 .settingsContent { min-height: 300px; }
+.taskDetailPanel {
+  width: min(100% - 32px, 640px);
+  max-height: min(84vh, 760px);
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  position: relative;
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+}
+
+.taskDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.taskDetailPanel h1 {
+  font-size: 26px;
+}
+
+.taskDetailEditButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  padding: 9px 12px;
+  background: var(--surface-muted);
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.taskDetailEditButton:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.taskDetailText {
+  color: var(--text-soft);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 22px;
+}
+
+.taskDetailMeta {
+  display: grid;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.taskDetailMeta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-strong);
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.taskDetailForm {
+  display: grid;
+  gap: 9px;
+}
+
+.taskDetailForm label {
+  color: var(--muted-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.taskDetailForm textarea,
+.taskDetailForm input,
+.taskDetailForm select {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  padding: 10px 11px;
+  color: var(--text-soft);
+  background: var(--surface-elevated);
+  font: inherit;
+  outline: 0;
+}
+
+.taskDetailForm textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.taskDetailForm textarea:focus,
+.taskDetailForm input:focus,
+.taskDetailForm select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.taskDetailActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.taskDetailCancel,
+.taskDetailSave {
+  border: 0;
+  border-radius: 9px;
+  padding: 10px 13px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.taskDetailCancel {
+  background: var(--bg-soft);
+  color: var(--muted-strong);
+}
+
+.taskDetailSave {
+  background: var(--primary);
+  color: #fff;
+}
+
+.taskDetailCancel:hover {
+  background: var(--border);
+}
+
+.taskDetailSave:hover {
+  background: var(--primary-hover);
+}
 
 @media (max-width: 650px) {
-  .appShell { padding: 32px 18px 88px; }
+  .appShell {
+      padding: 32px 18px 18px;
+    }
+  
+    .workspaceControls {
+      margin: -32px -18px 0;
+      padding: 32px 18px 16px;
+    }
   .appHeader { align-items: flex-start; flex-direction: column; }
   .workspaceTitle { align-items: flex-start; flex-direction: column; gap: 8px; }
   .headerActions { width: 100%; }
   .headerActions button { flex: 1; }
   .board { margin-top: 22px; gap: 14px; }
   .settingsPanel { padding: 26px 18px; }
+                .taskDetailPanel {
+                  padding: 26px 18px;
+                }
+        
+                .taskDetailHeader {
+                  align-items: flex-start;
+                  flex-direction: column;
+                }
 }

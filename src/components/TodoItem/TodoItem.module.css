@@ -6,9 +6,14 @@
     box-shadow: var(--shadow-card);
     cursor: grab;
     color: var(--text-soft);
+    max-width: 100%;
+    min-height: 148px;
+    flex: 0 0 auto;
+    overflow: hidden;
 }
 
 .todoItem:active { cursor: grabbing; }
+.todoItem:hover { border-color: var(--border-strong); }
 
 .taskTopline { display: flex; justify-content: space-between; align-items: center; }
 .completeButton, .deleteIcon, .editIcon { border: 0; background: transparent; cursor: pointer; }
@@ -16,7 +21,18 @@
 .itemActions { display: flex; align-items: center; gap: 4px; }
 .editIcon { color: var(--muted-faint); padding: 4px; }
 .deleteIcon { color: var(--muted-faint); padding: 4px; }
-.todoItemText{ font-size: 15px; font-weight: 650; color: var(--text-soft); line-height: 1.45; margin: 13px 0 18px; overflow-wrap: anywhere; }
+.todoItemText{
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--text-soft);
+    line-height: 1.45;
+    margin: 13px 0 18px;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
 
 .editIcon:hover { color: var(--primary); }
 .deleteIcon:hover { color: var(--danger); }

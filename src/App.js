@@ -57,14 +57,30 @@ function App() {
   const [draggedLaneId, setDraggedLaneId] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('tictac-theme') || 'light');
   const [settingsSection, setSettingsSection] = useState('lanes');
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [isDetailEditing, setIsDetailEditing] = useState(false);
+  const [detailText, setDetailText] = useState('');
+  const [detailDueAt, setDetailDueAt] = useState('');
+  const [detailProjectId, setDetailProjectId] = useState('none');
   const isDarkTheme = theme === 'dark';
   const selectedProject = projects.find(project => project.id === filters.projectId);
   const workspaceLabel = selectedProject?.name || (filters.projectId === 'none' ? 'Sin proyecto' : 'Todos los proyectos');
+  const selectedTodoProject = selectedTodo
+    ? projects.find(project => project.id === selectedTodo.projectId)
+    : null;
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('tictac-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (!selectedTodo) return;
+    setIsDetailEditing(false);
+    setDetailText(selectedTodo.text);
+    setDetailDueAt(selectedTodo.dueAt ? selectedTodo.dueAt.slice(0, 16) : '');
+    setDetailProjectId(selectedTodo.projectId || 'none');
+  }, [selectedTodo]);
 
   const openModal = (mode) => {
     setModalMode(mode);
@@ -80,45 +96,75 @@ function App() {
     if (draggedLaneId) reorderLane(draggedLaneId, targetLaneId);
     setDraggedLaneId(null);
   };
+
+  const formatTaskDate = (date) => {
+    if (!date) return 'Sin registro';
+    return new Intl.DateTimeFormat('es-MX', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(date));
+  };
+
+  const closeTaskDetail = () => {
+    setSelectedTodo(null);
+    setIsDetailEditing(false);
+  };
+
+  const saveTaskDetail = (event) => {
+    event.preventDefault();
+    if (!selectedTodo) return;
+
+    const nextProjectId = detailProjectId === 'none' ? null : detailProjectId;
+    if (!updateTask(selectedTodo.id, detailText, detailDueAt || null, nextProjectId)) return;
+    setSelectedTodo({
+      ...selectedTodo,
+      text: detailText.trim(),
+      dueAt: detailDueAt || null,
+      projectId: nextProjectId,
+    });
+    setIsDetailEditing(false);
+  };
   
   return (
     <main className="appShell">
-      <header className="appHeader">
-        <div>
-          <p className="eyebrow">TicTac</p>
-          <div className="workspaceTitle">
-            <h1>Espacio de trabajo</h1>
-            <span>{workspaceLabel}</span>
+      <div className="workspaceControls">
+        <header className="appHeader">
+          <div>
+            <p className="eyebrow">TicTac</p>
+            <div className="workspaceTitle">
+              <h1>Espacio de trabajo</h1>
+              <span>{workspaceLabel}</span>
+            </div>
+            <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
           </div>
-          <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
-        </div>
-        <div className="headerActions">
-          <button
-            className="themeButton"
-            type="button"
-            onClick={() => setTheme(currentTheme => currentTheme === 'dark' ? 'light' : 'dark')}
-            aria-label={isDarkTheme ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-            aria-pressed={isDarkTheme}
-          >
-            <i className={`bi ${isDarkTheme ? 'bi-sun' : 'bi-moon-stars'}`}></i>
-            {isDarkTheme ? 'Tema claro' : 'Tema oscuro'}
-          </button>
-          <button className="primaryButton" onClick={() => openModal('task')}>
-            <span>+</span> Nueva tarea
-          </button>
-          <button className="profileButton" onClick={() => openModal('settings')} aria-label="Abrir perfil y configuración">
-            <i className="bi bi-person-circle"></i>
-            Perfil
-          </button>
-        </div>
-      </header>
+          <div className="headerActions">
+            <button
+              className="themeButton"
+              type="button"
+              onClick={() => setTheme(currentTheme => currentTheme === 'dark' ? 'light' : 'dark')}
+              aria-label={isDarkTheme ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+              aria-pressed={isDarkTheme}
+            >
+              <i className={`bi ${isDarkTheme ? 'bi-sun' : 'bi-moon-stars'}`}></i>
+              {isDarkTheme ? 'Tema claro' : 'Tema oscuro'}
+            </button>
+            <button className="primaryButton" onClick={() => openModal('task')}>
+              <span>+</span> Nueva tarea
+            </button>
+            <button className="profileButton" onClick={() => openModal('settings')} aria-label="Abrir perfil y configuración">
+              <i className="bi bi-person-circle"></i>
+              Perfil
+            </button>
+          </div>
+        </header>
 
-      <TodoSearch
-        filters={filters}
-        setFilters={setFilters}
-        lanes={lanes}
-        projects={projects}
-      />
+        <TodoSearch
+          filters={filters}
+          setFilters={setFilters}
+          lanes={lanes}
+          projects={projects}
+        />
+      </div>
       <section className="board" aria-label="Tablero de tareas">
         {lanes.map(lane => {
           const laneTodos = searchedTodos.filter(todo => (todo.laneId || 'todo') === lane.id);
@@ -145,6 +191,7 @@ function App() {
                   onDelete={() => onDelete(todo.id)}
                   onUpdate={(text, dueAt, projectId) => updateTask(todo.id, text, dueAt, projectId)}
                   onMove={(laneId) => moveTask(todo.id, laneId)}
+                  onOpenDetails={() => setSelectedTodo(todo)}
                   onDragStart={() => setDraggedTaskId(todo.id)}
                   onDragEnd={() => setDraggedTaskId(null)}
                 />
@@ -220,6 +267,64 @@ function App() {
               projects={projects}
             />
           )}
+        </Modal>
+      )}
+      {selectedTodo && (
+        <Modal setIsOpen={closeTaskDetail}>
+          <section className="taskDetailPanel" aria-labelledby="task-detail-title">
+            <button type="button" className="settingsClose" onClick={closeTaskDetail} aria-label="Cerrar">×</button>
+            <p className="eyebrow">TAREA</p>
+            <div className="taskDetailHeader">
+              <h1 id="task-detail-title">Detalle de la tarea</h1>
+              {!isDetailEditing && (
+                <button type="button" className="taskDetailEditButton" onClick={() => setIsDetailEditing(true)}>
+                  <i className="bi bi-pencil"></i>
+                  Editar
+                </button>
+              )}
+            </div>
+            {isDetailEditing ? (
+              <form className="taskDetailForm" onSubmit={saveTaskDetail}>
+                <label htmlFor="detail-task-text">Descripción</label>
+                <textarea
+                  id="detail-task-text"
+                  value={detailText}
+                  onChange={(event) => setDetailText(event.target.value)}
+                  rows="6"
+                  required
+                />
+                <label htmlFor="detail-task-due">Fecha y hora de vencimiento</label>
+                <input
+                  id="detail-task-due"
+                  type="datetime-local"
+                  value={detailDueAt}
+                  onChange={(event) => setDetailDueAt(event.target.value)}
+                />
+                <label htmlFor="detail-task-project">Proyecto</label>
+                <select
+                  id="detail-task-project"
+                  value={detailProjectId}
+                  onChange={(event) => setDetailProjectId(event.target.value)}
+                >
+                  <option value="none">Sin proyecto</option>
+                  {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+                <div className="taskDetailActions">
+                  <button type="button" className="taskDetailCancel" onClick={() => setIsDetailEditing(false)}>Cancelar</button>
+                  <button type="submit" className="taskDetailSave">Guardar</button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <p className="taskDetailText">{selectedTodo.text}</p>
+                <div className="taskDetailMeta">
+                  <span><i className="bi bi-folder2-open"></i>{selectedTodoProject?.name || 'Sin proyecto'}</span>
+                  <span><i className="bi bi-plus-circle"></i>Creada: {formatTaskDate(selectedTodo.createdAt)}</span>
+                  <span><i className="bi bi-calendar3"></i>Vence: {selectedTodo.dueAt ? formatTaskDate(selectedTodo.dueAt) : 'Sin vencimiento'}</span>
+                </div>
+              </>
+            )}
+          </section>
         </Modal>
       )}
     </main>

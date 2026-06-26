@@ -55,16 +55,16 @@ export function TodoItem(props){
       if (props.onUpdate(taskText, taskDueAt || null, taskProjectId === 'none' ? null : taskProjectId)) setIsEditing(false);
     };
 
-    const handleDoubleClick = (event) => {
+    const handleOpenDetails = (event) => {
       if (event.target.closest('button, input, textarea, label')) return;
-      startEditing();
+      if (!isEditing) props.onOpenDetails();
     };
 
     return (
       <li
         className={styles.todoItem}
         draggable={!isEditing}
-        onDoubleClick={handleDoubleClick}
+        onClick={handleOpenDetails}
         onDragStart={(event) => {
           if (isEditing) return;
           event.dataTransfer.effectAllowed = 'move';
