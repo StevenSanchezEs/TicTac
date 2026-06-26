@@ -58,6 +58,8 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('tictac-theme') || 'light');
   const [settingsSection, setSettingsSection] = useState('lanes');
   const isDarkTheme = theme === 'dark';
+  const selectedProject = projects.find(project => project.id === filters.projectId);
+  const workspaceLabel = selectedProject?.name || (filters.projectId === 'none' ? 'Sin proyecto' : 'Todos los proyectos');
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -83,8 +85,11 @@ function App() {
     <main className="appShell">
       <header className="appHeader">
         <div>
-          <p className="eyebrow">ORGANIZA TU DÍA</p>
-          <h1>Mi tablero</h1>
+          <p className="eyebrow">TicTac</p>
+          <div className="workspaceTitle">
+            <h1>Espacio de trabajo</h1>
+            <span>{workspaceLabel}</span>
+          </div>
           <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
         </div>
         <div className="headerActions">
