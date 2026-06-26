@@ -32,8 +32,81 @@
 
 .TodoSearch::placeholder { color: var(--muted-faint); }
 
+.filtersGrid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(120px, 1fr)) auto;
+    gap: 12px;
+    margin-top: 16px;
+    align-items: end;
+}
+
+.filtersGrid label {
+    color: var(--muted-strong);
+    display: grid;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.filtersGrid select,
+.filtersGrid input {
+    min-width: 0;
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    padding: 10px 11px;
+    color: var(--text-soft);
+    background: var(--surface);
+    font: inherit;
+    font-size: 13px;
+    outline: 0;
+}
+
+.filtersGrid select:focus,
+.filtersGrid input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.clearButton {
+    height: 40px;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    padding: 0 13px;
+    color: var(--muted-strong);
+    background: var(--surface);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.clearButton:hover:not(:disabled) {
+    color: var(--text);
+    background: var(--surface-muted);
+}
+
+.clearButton:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+}
+
 @media (max-width: 768px){
     .todoContainer{
         padding: 0 18px;
+    }
+
+    .filtersGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .clearButton {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 460px){
+    .filtersGrid {
+        grid-template-columns: 1fr;
     }
 }

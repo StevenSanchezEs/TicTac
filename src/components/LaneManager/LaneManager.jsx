@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import styles from './LaneManager.module.css';
 
-export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, deleteLane, doneLaneId, setDoneLane }) {
+export function LaneManager({ lanes, todos, setIsOpen, addLane, renameLane, moveLane, deleteLane, doneLaneId, setDoneLane, embedded = false }) {
   const [editingLaneId, setEditingLaneId] = useState(null);
   const [name, setName] = useState('');
+  const [newLaneName, setNewLaneName] = useState('');
   const baseLaneId = 'todo';
 
   const startEditing = (lane) => {
@@ -26,12 +27,33 @@ export function LaneManager({ lanes, todos, setIsOpen, renameLane, moveLane, del
     if (window.confirm(message)) deleteLane(lane.id);
   };
 
+  const createLane = (event) => {
+    event.preventDefault();
+    if (!addLane) return;
+    if (addLane(newLaneName)) setNewLaneName('');
+  };
+
   return (
-    <section className={styles.manager} aria-labelledby="lane-manager-title">
-      <button type="button" className={styles.close} onClick={() => setIsOpen(false)} aria-label="Cerrar">×</button>
+    <section className={`${styles.manager} ${embedded ? styles.embedded : ''}`} aria-labelledby="lane-manager-title">
+      {setIsOpen && !embedded && <button type="button" className={styles.close} onClick={() => setIsOpen(false)} aria-label="Cerrar">×</button>}
       <p className={styles.eyebrow}>CONFIGURACIÓN DEL TABLERO</p>
       <h1 id="lane-manager-title">Gestionar carriles</h1>
       <p className={styles.help}>Usa las flechas para definir el orden y marca qué carril representa las tareas terminadas. “Por hacer” es el carril base y no se puede renombrar ni eliminar.</p>
+
+      {addLane && (
+        <form className={styles.createForm} onSubmit={createLane}>
+          <label htmlFor="new-lane-name">Nuevo carril</label>
+          <div>
+            <input
+              id="new-lane-name"
+              value={newLaneName}
+              onChange={(event) => setNewLaneName(event.target.value)}
+              placeholder="Ej. En revisión"
+            />
+            <button type="submit">Crear</button>
+          </div>
+        </form>
+      )}
 
       <ul className={styles.laneList}>
         {lanes.map((lane, index) => {

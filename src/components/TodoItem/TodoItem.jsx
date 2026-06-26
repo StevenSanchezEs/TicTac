@@ -11,6 +11,7 @@ export function TodoItem(props){
     const [isEditing, setIsEditing] = useState(false);
     const [taskText, setTaskText] = useState(props.text);
     const [taskDueAt, setTaskDueAt] = useState(getDateInputValue(props.dueAt));
+    const [taskProjectId, setTaskProjectId] = useState(props.projectId || 'none');
 
     const formatDate = (date) => new Intl.DateTimeFormat('es-MX', {
       dateStyle: 'medium',
@@ -25,6 +26,8 @@ export function TodoItem(props){
       ? formatDate(props.dueAt)
       : 'Sin vencimiento';
 
+    const projectName = props.projects.find(project => project.id === props.projectId)?.name || 'Sin proyecto';
+
     const dueDateClassName = props.dueAt
       ? styles.taskDate
       : `${styles.taskDate} ${styles.mutedDate}`;
@@ -36,18 +39,20 @@ export function TodoItem(props){
     const startEditing = () => {
       setTaskText(props.text);
       setTaskDueAt(getDateInputValue(props.dueAt));
+      setTaskProjectId(props.projectId || 'none');
       setIsEditing(true);
     };
 
     const cancelEditing = () => {
       setTaskText(props.text);
       setTaskDueAt(getDateInputValue(props.dueAt));
+      setTaskProjectId(props.projectId || 'none');
       setIsEditing(false);
     };
 
     const saveTask = (event) => {
       event.preventDefault();
-      if (props.onUpdate(taskText, taskDueAt || null)) setIsEditing(false);
+      if (props.onUpdate(taskText, taskDueAt || null, taskProjectId === 'none' ? null : taskProjectId)) setIsEditing(false);
     };
 
     const handleDoubleClick = (event) => {
@@ -100,6 +105,15 @@ export function TodoItem(props){
               value={taskDueAt}
               onChange={(event) => setTaskDueAt(event.target.value)}
             />
+            <label className={styles.editLabel} htmlFor={`task-project-${props.id}`}>Proyecto</label>
+            <select
+              id={`task-project-${props.id}`}
+              value={taskProjectId}
+              onChange={(event) => setTaskProjectId(event.target.value)}
+            >
+              <option value="none">Sin proyecto</option>
+              {props.projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+            </select>
             <div className={styles.editActions}>
               <button type="button" className={styles.cancelEdit} onClick={cancelEditing}>Cancelar</button>
               <button type="submit" className={styles.saveEdit}>Guardar</button>
@@ -108,6 +122,7 @@ export function TodoItem(props){
         ) : (
           <>
             <p className={`${styles.todoItemText} ${props.completed ? styles.todoItemTextComplete : ''}`}>{props.text}</p>
+            <span className={styles.projectBadge}><i className="bi bi-folder2-open"></i>{projectName}</span>
             <div className={styles.taskFooter}>
               <span className={createdDateClassName}><i className="bi bi-plus-circle"></i>Creada: {formattedCreatedAt}</span>
               <span className={dueDateClassName}><i className="bi bi-calendar3"></i>Vence: {formattedDueAt}</span>

@@ -9,14 +9,25 @@
 .eyebrow { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: .14em; margin-bottom: 7px; }
 .appHeader h1 { font-size: clamp(30px, 4vw, 42px); color: var(--text); letter-spacing: -.04em; }
 .headerActions { display: flex; gap: 10px; flex-wrap: wrap; }
-.primaryButton, .secondaryButton, .themeButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 15px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease; }
+.primaryButton, .secondaryButton, .themeButton, .profileButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 15px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease; }
 .primaryButton { color: #fff; background: var(--primary); border: 1px solid var(--primary); }
 .primaryButton:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
 .secondaryButton, .themeButton { color: var(--muted-strong); background: var(--surface); border: 1px solid var(--border-strong); }
 .secondaryButton:hover, .themeButton:hover { color: var(--text); background: var(--surface-muted); }
 .themeButton { box-shadow: var(--shadow-card); }
+.profileButton { color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-card); }
+.profileButton:hover { background: var(--surface-muted); border-color: var(--primary); }
 .board { max-width: 1280px; margin: 28px auto 0; display: flex; align-items: stretch; gap: 20px; overflow-x: auto; padding: 4px 2px 24px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.settingsPanel { width: min(100% - 32px, 760px); max-height: min(86vh, 820px); overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px; position: relative; color: var(--text); box-shadow: var(--shadow-card); }
+.settingsClose { position: absolute; top: 13px; right: 13px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bg-soft); color: var(--muted); font-size: 24px; cursor: pointer; }
+.settingsClose:hover { background: var(--border); color: var(--text); }
+.settingsHeader h1 { font-size: 26px; margin-bottom: 20px; }
+.settingsTabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
+.settingsTabs button { display: inline-flex; align-items: center; gap: 7px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted-strong); padding: 0 12px 12px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.settingsTabs button:hover { color: var(--text); }
+.settingsTabs .settingsTabActive { color: var(--primary); border-bottom-color: var(--primary); }
+.settingsContent { min-height: 300px; }
 
 @media (max-width: 650px) {
   .appShell { padding: 32px 18px 88px; }
@@ -24,4 +35,5 @@
   .headerActions { width: 100%; }
   .headerActions button { flex: 1; }
   .board { margin-top: 22px; gap: 14px; }
+  .settingsPanel { padding: 26px 18px; }
 }

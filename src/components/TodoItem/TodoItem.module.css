@@ -22,6 +22,7 @@
 .deleteIcon:hover { color: var(--danger); }
 
 .todoItemTextComplete { text-decoration: line-through; color: var(--muted-faint); }
+.projectBadge { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 0 0 14px; padding: 5px 8px; border-radius: 8px; background: var(--surface-muted); color: var(--muted-strong); font-size: 12px; font-weight: 800; overflow-wrap: anywhere; }
 .taskFooter { display: flex; flex-direction: column; gap: 10px; }
 .taskDate { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; }
 .mutedDate { color: var(--muted-faint); }
@@ -31,10 +32,12 @@
 .editForm { margin-top: 14px; display: grid; gap: 8px; }
 .editLabel { color: var(--muted-strong); font-size: 12px; font-weight: 800; }
 .editForm textarea,
-.editForm input { width: 100%; border: 1px solid var(--border-strong); border-radius: 9px; padding: 9px 10px; color: var(--text-soft); font: inherit; outline: 0; background: var(--surface-elevated); }
+.editForm input,
+.editForm select { width: 100%; border: 1px solid var(--border-strong); border-radius: 9px; padding: 9px 10px; color: var(--text-soft); font: inherit; outline: 0; background: var(--surface-elevated); }
 .editForm textarea { resize: vertical; min-height: 78px; }
 .editForm textarea:focus,
-.editForm input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.editForm input:focus,
+.editForm select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
 .editActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .cancelEdit,
 .saveEdit { border: 0; border-radius: 8px; padding: 8px 10px; font-size: 12px; font-weight: 800; cursor: pointer; }

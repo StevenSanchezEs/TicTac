@@ -8,8 +8,19 @@ const DEFAULT_LANES = [
 ];
 
 const DONE_LANE_STORAGE_KEY = 'todo-done-lane-id';
+const PROJECT_STORAGE_KEY = 'todo-projects';
 const BASE_LANE = DEFAULT_LANES[0];
 const BASE_LANE_ID = BASE_LANE.id;
+
+const EMPTY_FILTERS = {
+  text: '',
+  laneId: 'all',
+  projectId: 'all',
+  createdFrom: '',
+  createdTo: '',
+  dueFrom: '',
+  dueTo: '',
+};
 
 const getFallbackDoneLaneId = (lanes) => {
   return lanes.find(lane => lane.id === 'done')?.id || lanes[lanes.length - 1]?.id || 'done';
@@ -31,6 +42,11 @@ const getSavedLanes = () => {
     : [BASE_LANE, ...normalizedLanes];
 };
 
+const getSavedProjects = () => {
+  const savedProjects = localStorage.getItem(PROJECT_STORAGE_KEY);
+  return savedProjects ? JSON.parse(savedProjects) : [];
+};
+
 const migrateStoredTodos = (storedTodos) => {
   const now = new Date().toISOString();
   const savedLanes = getSavedLanes();
@@ -50,10 +66,31 @@ const migrateStoredTodos = (storedTodos) => {
       id: todo.id || uuidv4(),
       createdAt: todo.createdAt || now,
       dueAt: todo.dueAt || null,
+      projectId: todo.projectId || null,
       laneId: validLaneId,
       completed,
     };
   });
+};
+
+const isDateInRange = (dateValue, fromValue, toValue) => {
+  if (!fromValue && !toValue) return true;
+  if (!dateValue) return false;
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return false;
+
+  if (fromValue) {
+    const from = new Date(`${fromValue}T00:00:00`);
+    if (date < from) return false;
+  }
+
+  if (toValue) {
+    const to = new Date(`${toValue}T23:59:59`);
+    if (date > to) return false;
+  }
+
+  return true;
 };
 
 export function useTodos() {
@@ -63,7 +100,8 @@ export function useTodos() {
     return migrateStoredTodos(parsedTodos);
   });
   
-  const [searchValue, setSearchValue] = useState('');
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [projects, setProjects] = useState(() => getSavedProjects());
   const [lanes, setLanes] = useState(() => {
     return getSavedLanes();
   });
@@ -87,6 +125,10 @@ export function useTodos() {
   }, [lanes]);
 
   useEffect(() => {
+    localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projects));
+  }, [projects]);
+
+  useEffect(() => {
     if (doneLaneId !== effectiveDoneLaneId) setDoneLaneIdState(effectiveDoneLaneId);
   }, [doneLaneId, effectiveDoneLaneId]);
 
@@ -102,9 +144,16 @@ export function useTodos() {
     return todos.length;
   }, [todos]);
 
-  const searchedTodos = useMemo(() => todos.filter(todo =>
-    todo.text.toLowerCase().includes(searchValue.toLowerCase())
-  ), [todos, searchValue]);
+  const searchedTodos = useMemo(() => todos.filter(todo => {
+    const textMatches = todo.text.toLowerCase().includes(filters.text.toLowerCase());
+    const laneMatches = filters.laneId === 'all' || (todo.laneId || BASE_LANE_ID) === filters.laneId;
+    const projectMatches = filters.projectId === 'all'
+      || (filters.projectId === 'none' ? !todo.projectId : todo.projectId === filters.projectId);
+    const createdMatches = isDateInRange(todo.createdAt, filters.createdFrom, filters.createdTo);
+    const dueMatches = isDateInRange(todo.dueAt, filters.dueFrom, filters.dueTo);
+
+    return textMatches && laneMatches && projectMatches && createdMatches && dueMatches;
+  }), [todos, filters]);
 
   const onCompleted = (id) => {
     const pendingLaneId = lanes.find(lane => lane.id !== effectiveDoneLaneId)?.id;
@@ -146,13 +195,14 @@ export function useTodos() {
     }
   }, [isOpen])
 
-  const addTask = (text, dueAt, laneId) => {
+  const addTask = (text, dueAt, laneId, projectId) => {
     const selectedLaneId = laneId || BASE_LANE_ID;
     const newItem = {
       id: uuidv4(),
       text: text.trim(),
       createdAt: new Date().toISOString(),
       dueAt,
+      projectId: projectId || null,
       laneId: selectedLaneId,
       completed: selectedLaneId === effectiveDoneLaneId,
     };
@@ -165,12 +215,12 @@ export function useTodos() {
     ));
   };
 
-  const updateTask = (id, text, dueAt) => {
+  const updateTask = (id, text, dueAt, projectId) => {
     const trimmedText = text.trim();
     if (!trimmedText) return false;
 
     setTodos(currentTodos => currentTodos.map(todo =>
-      todo.id === id ? { ...todo, text: trimmedText, dueAt: dueAt || null } : todo
+      todo.id === id ? { ...todo, text: trimmedText, dueAt: dueAt || null, projectId: projectId || null } : todo
     ));
     return true;
   };
@@ -193,6 +243,34 @@ export function useTodos() {
       name: trimmedName,
       color: '#8b5cf6',
     }]);
+    return true;
+  };
+
+  const addProject = (name) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) return false;
+    setProjects(currentProjects => [...currentProjects, {
+      id: uuidv4(),
+      name: trimmedName,
+      createdAt: new Date().toISOString(),
+    }]);
+    return true;
+  };
+
+  const renameProject = (id, name) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) return false;
+    setProjects(currentProjects => currentProjects.map(project =>
+      project.id === id ? { ...project, name: trimmedName } : project
+    ));
+    return true;
+  };
+
+  const deleteProject = (id) => {
+    setTodos(currentTodos => currentTodos.map(todo =>
+      todo.projectId === id ? { ...todo, projectId: null } : todo
+    ));
+    setProjects(currentProjects => currentProjects.filter(project => project.id !== id));
     return true;
   };
 
@@ -254,12 +332,13 @@ export function useTodos() {
   return {
     todos,
     setTodos,
-    searchValue,
-    setSearchValue,
+    filters,
+    setFilters,
     completedTodos,
     totalTodos,
     searchedTodos,
     lanes,
+    projects,
     doneLaneId: effectiveDoneLaneId,
     onCompleted,
     onDelete,
@@ -269,6 +348,9 @@ export function useTodos() {
     addTask,
     moveTask,
     updateTask,
+    addProject,
+    renameProject,
+    deleteProject,
     addLane,
     renameLane,
     moveLane,

@@ -1,0 +1,31 @@
+.manager { color: var(--text); }
+.eyebrow { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .12em; margin-bottom: 8px; }
+.manager h1 { font-size: 24px; margin-bottom: 8px; }
+.help { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.createForm { margin-top: 20px; display: grid; gap: 7px; }
+.createForm label { color: var(--muted-strong); font-size: 12px; font-weight: 800; }
+.createForm div { display: flex; gap: 8px; }
+.createForm input { min-width: 0; flex: 1; border: 1px solid var(--border-strong); border-radius: 9px; padding: 10px 11px; color: var(--text-soft); background: var(--surface-elevated); font: inherit; outline: 0; }
+.createForm input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.createForm button { border: 0; border-radius: 9px; padding: 0 14px; background: var(--primary); color: #fff; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.createForm button:hover { background: var(--primary-hover); }
+.projectList { list-style: none; margin: 23px 0 0; display: grid; gap: 9px; }
+.projectRow { min-height: 54px; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 10px; }
+.projectIcon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: var(--primary); background: var(--primary-soft); flex: 0 0 auto; }
+.projectName { flex: 1; font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.count { color: var(--muted-strong); background: var(--surface-muted); border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.actions { margin-left: auto; display: flex; gap: 2px; }
+.actions button { width: 31px; height: 31px; border: 0; border-radius: 7px; color: var(--muted); background: transparent; cursor: pointer; }
+.actions button:hover { color: var(--primary); background: var(--primary-soft); }
+.actions .remove:hover { color: var(--danger-text); background: var(--danger-soft); }
+.renameForm { display: flex; gap: 7px; flex: 1; }
+.renameForm input { min-width: 0; flex: 1; border: 1px solid var(--primary); border-radius: 7px; padding: 7px 9px; outline: 0; color: var(--text-soft); background: var(--surface-elevated); }
+.save { border: 0; background: var(--primary); color: #fff; padding: 0 10px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.emptyState { color: var(--muted); background: var(--surface-muted); border-radius: 9px; padding: 13px; font-size: 13px; }
+
+@media (max-width: 480px) {
+  .createForm div { flex-direction: column; }
+  .createForm button { height: 40px; }
+  .projectRow { align-items: flex-start; flex-wrap: wrap; }
+  .projectName { flex-basis: calc(100% - 42px); }
+}

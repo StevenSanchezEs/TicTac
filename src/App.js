@@ -9,6 +9,7 @@ import './App.css'
 import { Modal } from './components/Modal/Modal';
 import { useEffect, useState } from 'react';
 import { LaneManager } from './components/LaneManager/LaneManager';
+import { ProjectManager } from './components/ProjectManager/ProjectManager';
 
 /* const defaultTodos = [
   { text: 'Cortar cebolla', completed: true},
@@ -25,8 +26,8 @@ function App() {
   
   const {
     todos,
-    searchValue,
-    setSearchValue,
+    filters,
+    setFilters,
     completedTodos,
     totalTodos,
     searchedTodos,
@@ -38,7 +39,11 @@ function App() {
     addTask,
     moveTask,
     updateTask,
+    addProject,
+    renameProject,
+    deleteProject,
     lanes,
+    projects,
     addLane,
     renameLane,
     moveLane,
@@ -51,6 +56,7 @@ function App() {
   const [draggedTaskId, setDraggedTaskId] = useState(null);
   const [draggedLaneId, setDraggedLaneId] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('tictac-theme') || 'light');
+  const [settingsSection, setSettingsSection] = useState('lanes');
   const isDarkTheme = theme === 'dark';
 
   useEffect(() => {
@@ -92,19 +98,22 @@ function App() {
             <i className={`bi ${isDarkTheme ? 'bi-sun' : 'bi-moon-stars'}`}></i>
             {isDarkTheme ? 'Tema claro' : 'Tema oscuro'}
           </button>
-          <button className="secondaryButton" onClick={() => openModal('manage-lanes')}>
-            Gestionar carriles
-          </button>
-          <button className="secondaryButton" onClick={() => openModal('lane')}>
-            <span>+</span> Nuevo carril
-          </button>
           <button className="primaryButton" onClick={() => openModal('task')}>
             <span>+</span> Nueva tarea
+          </button>
+          <button className="profileButton" onClick={() => openModal('settings')} aria-label="Abrir perfil y configuración">
+            <i className="bi bi-person-circle"></i>
+            Perfil
           </button>
         </div>
       </header>
 
-      <TodoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
+      <TodoSearch
+        filters={filters}
+        setFilters={setFilters}
+        lanes={lanes}
+        projects={projects}
+      />
       <section className="board" aria-label="Tablero de tareas">
         {lanes.map(lane => {
           const laneTodos = searchedTodos.filter(todo => (todo.laneId || 'todo') === lane.id);
@@ -126,9 +135,10 @@ function App() {
                   key={todo.id}
                   {...todo}
                   lanes={lanes}
+                  projects={projects}
                   onCompleted={() => onCompleted(todo.id)}
                   onDelete={() => onDelete(todo.id)}
-                  onUpdate={(text, dueAt) => updateTask(todo.id, text, dueAt)}
+                  onUpdate={(text, dueAt, projectId) => updateTask(todo.id, text, dueAt, projectId)}
                   onMove={(laneId) => moveTask(todo.id, laneId)}
                   onDragStart={() => setDraggedTaskId(todo.id)}
                   onDragEnd={() => setDraggedTaskId(null)}
@@ -141,24 +151,68 @@ function App() {
       {/* <CreateTodoButton onClick={() => openModal('task')}/> */}
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
-          {modalMode === 'manage-lanes' ? (
-            <LaneManager
-              lanes={lanes}
-              todos={todos}
-              setIsOpen={setIsOpen}
-              renameLane={renameLane}
-              moveLane={moveLane}
-              deleteLane={deleteLane}
-              doneLaneId={doneLaneId}
-              setDoneLane={setDoneLane}
-            />
+          {modalMode === 'settings' ? (
+            <section className="settingsPanel" aria-labelledby="settings-title">
+              <button type="button" className="settingsClose" onClick={() => setIsOpen(false)} aria-label="Cerrar">×</button>
+              <div className="settingsHeader">
+                <p className="eyebrow">PERFIL Y CONFIGURACIÓN</p>
+                <h1 id="settings-title">Configurar tablero</h1>
+              </div>
+              <div className="settingsTabs" role="tablist" aria-label="Módulos de configuración">
+                <button
+                  type="button"
+                  className={settingsSection === 'lanes' ? 'settingsTabActive' : ''}
+                  onClick={() => setSettingsSection('lanes')}
+                  role="tab"
+                  aria-selected={settingsSection === 'lanes'}
+                >
+                  <i className="bi bi-kanban"></i>
+                  Carriles
+                </button>
+                <button
+                  type="button"
+                  className={settingsSection === 'projects' ? 'settingsTabActive' : ''}
+                  onClick={() => setSettingsSection('projects')}
+                  role="tab"
+                  aria-selected={settingsSection === 'projects'}
+                >
+                  <i className="bi bi-folder2-open"></i>
+                  Proyectos
+                </button>
+              </div>
+              <div className="settingsContent">
+                {settingsSection === 'lanes' ? (
+                  <LaneManager
+                    lanes={lanes}
+                    todos={todos}
+                    addLane={addLane}
+                    renameLane={renameLane}
+                    moveLane={moveLane}
+                    deleteLane={deleteLane}
+                    doneLaneId={doneLaneId}
+                    setDoneLane={setDoneLane}
+                    embedded
+                  />
+                ) : (
+                  <ProjectManager
+                    projects={projects}
+                    todos={todos}
+                    addProject={addProject}
+                    renameProject={renameProject}
+                    deleteProject={deleteProject}
+                  />
+                )}
+              </div>
+            </section>
           ) : (
             <TodoForm
               mode={modalMode}
               setIsOpen={setIsOpen}
               addTask={addTask}
               addLane={addLane}
+              addProject={addProject}
               lanes={lanes}
+              projects={projects}
             />
           )}
         </Modal>
