@@ -1,19 +1,51 @@
 .todoContainer{
-    margin: 30px auto 0;
+    margin: 0 auto 18px;
     max-width: 1280px;
     padding: 0 32px;
 }
 
+.searchRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
 .inputGroup {
-    margin: 0 auto;
     display: flex; /* Usamos flex para alinear el ícono e input */
     align-items: center;
-    max-width: 420px;
+    max-width: 620px;
     width: 100%; height: 42px; font-size: 17px; border-radius: 9px; padding: 0 13px;
     background-color: var(--surface); border: 1px solid var(--border);
     outline: none;
     gap: 10px; /* Espacio entre el ícono y el input */
     box-shadow: var(--shadow-card);
+}
+
+.filterButton {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    padding: 0 13px;
+    color: var(--muted-strong);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.filterButton:hover,
+.filterButtonActive {
+    color: var(--text);
+    border-color: var(--primary);
+    background: var(--surface-muted);
 }
 
 .icon {
@@ -32,11 +64,23 @@
 
 .TodoSearch::placeholder { color: var(--muted-faint); }
 
+.filtersPanel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: max(0px, calc((100% - 760px) / 2));
+    z-index: 20;
+    width: min(760px, 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+}
+
 .filtersGrid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(120px, 1fr)) auto;
+    grid-template-columns: repeat(5, minmax(120px, 1fr)) auto;
     gap: 12px;
-    margin-top: 16px;
     align-items: end;
 }
 
@@ -96,6 +140,19 @@
         padding: 0 18px;
     }
 
+    .searchRow {
+        align-items: stretch;
+    }
+
+    .filterButton {
+        flex: 0 0 auto;
+    }
+
+    .filtersPanel {
+        right: 0;
+        width: 100%;
+    }
+
     .filtersGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -106,6 +163,18 @@
 }
 
 @media (max-width: 460px){
+    .searchRow {
+        flex-direction: column;
+    }
+
+    .filterButton {
+        width: 100%;
+    }
+
+    .filtersPanel {
+        top: calc(100% + 8px);
+    }
+
     .filtersGrid {
         grid-template-columns: 1fr;
     }

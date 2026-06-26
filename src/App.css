@@ -26,7 +26,11 @@
 .eyebrow { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: .14em; margin-bottom: 7px; }
 .appHeader h1 { font-size: clamp(30px, 4vw, 42px); color: var(--text); letter-spacing: -.04em; }
 .workspaceTitle { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.workspaceTitle span { max-width: min(420px, 100%); border: 1px solid var(--border-strong); border-radius: 999px; padding: 6px 11px; color: var(--muted-strong); background: var(--surface); font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+.projectWorkspaceSelector { position: relative; display: inline-flex; align-items: center; gap: 7px; max-width: min(420px, 100%); border: 1px solid var(--border-strong); border-radius: 999px; padding: 6px 30px 6px 11px; color: var(--muted-strong); background: var(--surface); font-size: 13px; font-weight: 800; cursor: pointer; }
+.projectWorkspaceSelector:hover { border-color: var(--primary); color: var(--text); }
+.projectWorkspaceSelector span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.projectWorkspaceSelector select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.projectWorkspaceSelector i { position: absolute; right: 10px; pointer-events: none; font-size: 12px; }
 .headerActions { display: flex; gap: 10px; flex-wrap: wrap; }
 .primaryButton, .secondaryButton, .themeButton, .profileButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 15px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease; }
 .primaryButton { color: #fff; background: var(--primary); border: 1px solid var(--primary); }
@@ -41,7 +45,7 @@
   max-width: 1280px;
   flex: 1;
   min-height: 0;
-  margin: 48px auto 0;
+  margin: 18px auto 0;
   display: flex;
   align-items: stretch;
   gap: 20px;
@@ -214,6 +218,7 @@
     }
   .appHeader { align-items: flex-start; flex-direction: column; }
   .workspaceTitle { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .workspaceStatus { justify-content: flex-start; }
   .headerActions { width: 100%; }
   .headerActions button { flex: 1; }
   .board { margin-top: 22px; gap: 14px; }

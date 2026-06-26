@@ -128,12 +128,32 @@ function App() {
   return (
     <main className="appShell">
       <div className="workspaceControls">
+        <TodoSearch
+          filters={filters}
+          setFilters={setFilters}
+          lanes={lanes}
+        />
+
         <header className="appHeader">
           <div>
             <p className="eyebrow">TicTac</p>
             <div className="workspaceTitle">
               <h1>Espacio de trabajo</h1>
-              <span>{workspaceLabel}</span>
+              <label className="projectWorkspaceSelector" aria-label="Proyecto del espacio de trabajo">
+                <span>{workspaceLabel}</span>
+                <select
+                  value={filters.projectId}
+                  onChange={(event) => setFilters(currentFilters => ({
+                    ...currentFilters,
+                    projectId: event.target.value,
+                  }))}
+                >
+                  <option value="all">Todos los proyectos</option>
+                  <option value="none">Sin proyecto</option>
+                  {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+                <i className="bi bi-chevron-down"></i>
+              </label>
             </div>
             <TodoCounter completed={loading ? 0 : completedTodos} total={loading ? 0 : totalTodos}/>
           </div>
@@ -157,13 +177,6 @@ function App() {
             </button>
           </div>
         </header>
-
-        <TodoSearch
-          filters={filters}
-          setFilters={setFilters}
-          lanes={lanes}
-          projects={projects}
-        />
       </div>
       <section className="board" aria-label="Tablero de tareas">
         {lanes.map(lane => {
